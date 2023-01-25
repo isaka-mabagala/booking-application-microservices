@@ -2,6 +2,7 @@ package com.project19.customer.service;
 
 import java.util.Random;
 import com.project19.customer.dto.CustomerRequestDto;
+import com.project19.customer.dto.CustomerResponseDto;
 import com.project19.customer.message.ResponseMessage;
 import com.project19.customer.model.CustomerModel;
 import com.project19.customer.repository.CustomerRepository;
@@ -36,6 +37,22 @@ public class CustomerService {
     }
 
     return new ResponseMessage("success");
+  }
+
+  public CustomerResponseDto getCustomerByNumber(String customerNumber) {
+    CustomerModel customer = customerRepository.findByCustNumber(customerNumber).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            String.format("cannot find customer by number %s", customerNumber)));
+
+    return new CustomerResponseDto(customer);
+  }
+
+  public CustomerResponseDto getCustomerByEmail(String email) {
+    CustomerModel customer = customerRepository.findByEmail(email).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            String.format("cannot find customer by email %s", email)));
+
+    return new CustomerResponseDto(customer);
   }
 
   private String randomCustomerNumber(int len) {
