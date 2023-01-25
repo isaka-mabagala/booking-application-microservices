@@ -1,4 +1,11 @@
 {
+  "java.format.settings.url": "./.vscode/eclipse-java-google-style.xml",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "modifications",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "java.eclipse.downloadSources": true,
   "java.maven.downloadSources": true,
   "java.configuration.updateBuildConfiguration": "automatic"
 }
