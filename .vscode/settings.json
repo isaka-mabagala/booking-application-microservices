@@ -1,0 +1,4 @@
+{
+  "java.maven.downloadSources": true,
+  "java.configuration.updateBuildConfiguration": "automatic"
+}
