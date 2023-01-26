@@ -3,9 +3,11 @@ package com.project19.booking.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
 import com.project19.booking.dto.BookingRequestDto;
+import com.project19.booking.dto.BookingResponseDto;
 import com.project19.booking.message.ResponseMessage;
 import com.project19.booking.model.BookingModel;
 import com.project19.booking.repository.BookingRepository;
@@ -44,6 +46,21 @@ public class BookingService {
     }
 
     return new ResponseMessage("booking success");
+  }
+
+  public BookingResponseDto getBookingByNumber(String bookingNumber) {
+    BookingModel booking = bookingRepository.findByBookingNumber(
+        bookingNumber).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                String.format("cannot find booking by number %s", bookingNumber)));
+
+    return new BookingResponseDto(booking);
+  }
+
+  public List<BookingResponseDto> getBookingByCustomerNumber(String customerNumber) {
+    List<BookingModel> bookings = bookingRepository.findByCustomerNumber(customerNumber);
+
+    return bookings.stream().map(booking -> new BookingResponseDto(booking)).toList();
   }
 
   private String randomBookingNumber(int len) {
