@@ -3,9 +3,12 @@ package com.project19.payment.controller;
 import javax.validation.Valid;
 import com.project19.payment.dto.TransactionRequestDto;
 import com.project19.payment.dto.TransactionResponseDto;
+import com.project19.payment.model.TransactionModel;
 import com.project19.payment.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +27,11 @@ public class TransactionController {
   public TransactionResponseDto cardTransaction(
       @Valid @RequestBody TransactionRequestDto transactionRDto) {
     return transactionService.cardTransaction(transactionRDto);
+  }
+
+  @GetMapping("/transaction/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public TransactionModel bookingTransaction(@PathVariable Long id) {
+    return transactionService.getBookingTransaction(id);
   }
 }

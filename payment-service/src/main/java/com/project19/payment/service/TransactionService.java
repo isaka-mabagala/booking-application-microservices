@@ -50,4 +50,10 @@ public class TransactionService {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "booking number transaction paid");
     }
   }
+
+  public TransactionModel getBookingTransaction(Long id) {
+    return transactionRepository.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            String.format("cannot find booking transaction by ID %s", id)));
+  }
 }
