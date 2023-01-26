@@ -32,4 +32,22 @@ public class ExceptionHandlerAdvice {
     return apiError;
   }
 
+  @ExceptionHandler({InvalidCardDetailException.class})
+  @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+  ApiError handleInvalidCardDetailException(InvalidCardDetailException exception,
+      HttpServletRequest request) {
+    ApiError apiError = new ApiError(HttpStatus.NOT_ACCEPTABLE.value(), exception.getMessage());
+
+    return apiError;
+  }
+
+  @ExceptionHandler({InsufficientBalanceException.class})
+  @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+  ApiError handleInsufficientBalanceException(InsufficientBalanceException exception,
+      HttpServletRequest request) {
+    ApiError apiError = new ApiError(HttpStatus.NOT_ACCEPTABLE.value(), exception.getMessage());
+
+    return apiError;
+  }
+
 }

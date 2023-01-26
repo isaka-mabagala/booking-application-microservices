@@ -1,1 +1,13 @@
+spring.datasource.url = jdbc:h2:file:./project19;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.username = user
+spring.datasource.password = user
+spring.datasource.driver-class-name = org.h2.Driver
+spring.datasource.generate-unique-name = false
+spring.jpa.hibernate.ddl-auto = update
+spring.jpa.database-platform = org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled = true
+spring.h2.console.path = /h2-console
+
 server.port = 
+server.error.include-message = always
+server.error.include-stacktrace = on-param
