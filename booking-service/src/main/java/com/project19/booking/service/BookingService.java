@@ -8,14 +8,21 @@ import java.util.Random;
 import java.util.TimeZone;
 import com.project19.booking.dto.BookingRequestDto;
 import com.project19.booking.dto.BookingResponseDto;
+import com.project19.booking.dto.BookingTransactionRequestDto;
+import com.project19.booking.dto.TransactionDto;
+import com.project19.booking.dto.TransactionResponseDto;
 import com.project19.booking.message.ResponseMessage;
 import com.project19.booking.model.BookingModel;
 import com.project19.booking.repository.BookingRepository;
 import com.project19.booking.type.BookingStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -23,6 +30,12 @@ public class BookingService {
 
   @Autowired
   private BookingRepository bookingRepository;
+
+  @Autowired
+  private WebClient webClient;
+
+  @Autowired
+  private Environment env;
 
   public ResponseMessage roomBooking(BookingRequestDto bookingRequest) {
     TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -61,6 +74,46 @@ public class BookingService {
     List<BookingModel> bookings = bookingRepository.findByCustomerNumber(customerNumber);
 
     return bookings.stream().map(booking -> new BookingResponseDto(booking)).toList();
+  }
+
+  public BookingResponseDto bookingTransaction(BookingTransactionRequestDto bookingTransaction) {
+    BookingModel booking = bookingRepository.findByBookingNumber(
+        bookingTransaction.getBookingNumber()).orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                String.format("cannot find booking by number %s",
+                    bookingTransaction.getBookingNumber())));
+
+    TransactionDto transaction = new TransactionDto();
+    transaction.setBookingNumber(bookingTransaction.getBookingNumber());
+    transaction.setCardNumber(bookingTransaction.getCardNumber());
+    transaction.setCardExpiry(bookingTransaction.getCardExpiry());
+    transaction.setCardCvc(bookingTransaction.getCardCvc());
+    transaction.setAmount(Double.parseDouble(booking.getRoomPrice().toString()));
+    transaction.setPaymentMode("CARD");
+
+    // send transaction request to payment service
+    try {
+      String uri = env.getProperty("application.service.payment.url", "http://127.0.0.1:8083");
+      TransactionResponseDto response = webClient.post()
+          .uri(String.format("%s/api/transaction", uri))
+          .body(BodyInserters.fromValue(transaction))
+          .retrieve().bodyToMono(TransactionResponseDto.class)
+          .block();
+
+      // update booking details
+      booking.setStatus(BookingStatus.BOOKED.status);
+      booking.setTransactionId(response.getTransactionId());
+      bookingRepository.save(booking);
+
+      return new BookingResponseDto(booking);
+    } catch (WebClientResponseException we) {
+      if (we.getRawStatusCode() == 409) {
+        throw new ResponseStatusException(we.getStatusCode(), "booking number transaction paid");
+      } else if (we.getRawStatusCode() == 406) {
+        throw new ResponseStatusException(we.getStatusCode(), "invalid card details");
+      }
+      throw new ResponseStatusException(we.getStatusCode());
+    }
   }
 
   private String randomBookingNumber(int len) {

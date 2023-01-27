@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "application.service.payment.url",
+      "type": "java.lang.String",
+      "description": "URL for payment service",
+      "defaultValue": "http://127.0.0.1:8083"
+    }
+  ]
+}

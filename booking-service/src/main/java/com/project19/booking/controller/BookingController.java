@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import com.project19.booking.dto.BookingRequestDto;
 import com.project19.booking.dto.BookingResponseDto;
+import com.project19.booking.dto.BookingTransactionRequestDto;
 import com.project19.booking.message.ResponseMessage;
 import com.project19.booking.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,12 @@ public class BookingController {
     }
 
     return null;
+  }
+
+  @PostMapping("/booking/transaction")
+  @ResponseStatus(HttpStatus.CREATED)
+  public BookingResponseDto bookingTransaction(
+      @Valid @RequestBody BookingTransactionRequestDto bookingTransaction) {
+    return bookingService.bookingTransaction(bookingTransaction);
   }
 }
