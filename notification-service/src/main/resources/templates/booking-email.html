@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:remove="all">Booking Microservices Email</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p>
+      Thanks, <b><span th:text="${customerName}">Isaka Developer</span>!</b>
+    </p>
+    <p>
+      Your booking for room <b>No.<span th:text="${roomNo}">205</span></b> has been
+      confirmed. We are looking forward to providing you with the best service.
+    </p>
+    <p>
+      Project19 Hotel is expecting you on <span th:text="${expectDate}">29-01-2023</span>
+    </p>
+    <p><b>Check-in:</b> <span th:text="${checkIn}">29-01-2023</span></p>
+    <p><b>Check-out:</b> <span th:text="${checkOut}">31-01-2023</span></p>
+    <p><em>Visit your account dashboard to confirm your payment or cancel this booking.</em></p>
+    <p>
+      Regards, <br />
+      <em>Project19 Hotel</em>
+    </p>
+  </body>
+</html>

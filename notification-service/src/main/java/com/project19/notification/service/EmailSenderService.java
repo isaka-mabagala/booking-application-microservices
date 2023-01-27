@@ -20,8 +20,8 @@ public class EmailSenderService {
 
   private final SpringTemplateEngine templateEngine;
 
-  public void sendTransactionMessage(String fromEmail, String toEmail,
-      Map<String, Object> properties) {
+  public void sendEmailMessage(String fromEmail, String toEmail, String subject,
+      String template, Map<String, Object> properties) {
     try {
       MimeMessage message = emailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(
@@ -31,9 +31,9 @@ public class EmailSenderService {
       context.setVariables(properties);
       helper.setFrom(fromEmail);
       helper.setTo(toEmail);
-      helper.setSubject("Payment Confirmation");
+      helper.setSubject(subject);
 
-      String html = templateEngine.process("transaction-email.html", context);
+      String html = templateEngine.process(template, context);
       helper.setText(html, true);
 
       emailSender.send(message);
