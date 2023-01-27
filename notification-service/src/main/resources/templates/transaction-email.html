@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title th:remove="all">Booking Microservices Email</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p>
+      Dear, <b><span th:text="${customerName}">Isaka Developer</span>!</b>
+    </p>
+    <p>
+      Thank you for completing your booking payment using CARD method on
+      <span th:text="${paidDate}">27-01-2023</span>
+    </p>
+    <p>
+      This is a confirmation email to inform you that your payment was
+      successful. Your payment details and confirmation will be provided on your
+      account dashboard.
+    </p>
+    <p>
+      Your <b><span th:text="${cardType}">Visa</span></b> Card, No.
+      <b><span th:text="${cardNo}">*****9102</span></b>
+      was debited with <b><span th:text="${amount}">23,000.00</span> TZS</b>
+    </p>
+    <p>
+      Regards, <br />
+      <em>Project19 Team</em>
+    </p>
+  </body>
+</html>
