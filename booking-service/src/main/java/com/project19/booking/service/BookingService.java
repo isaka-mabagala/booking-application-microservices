@@ -1,14 +1,17 @@
 package com.project19.booking.service;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
+import com.project19.booking.dto.BookingEmailDto;
 import com.project19.booking.dto.BookingRequestDto;
 import com.project19.booking.dto.BookingResponseDto;
 import com.project19.booking.dto.BookingTransactionRequestDto;
+import com.project19.booking.dto.CustomerResponseDto;
 import com.project19.booking.dto.TransactionDto;
 import com.project19.booking.dto.TransactionResponseDto;
 import com.project19.booking.message.ResponseMessage;
@@ -38,6 +41,22 @@ public class BookingService {
   private Environment env;
 
   public ResponseMessage roomBooking(BookingRequestDto bookingRequest) {
+    // send customer detail request to customer service
+    CustomerResponseDto customer;
+    try {
+      String uri = env.getProperty("application.service.customer.url", "http://127.0.0.1:8080");
+      customer = webClient.get()
+          .uri(String.format("%s/api/customer?number=%s", uri, bookingRequest.getCustomerNumber()))
+          .retrieve().bodyToMono(CustomerResponseDto.class)
+          .block();
+    } catch (WebClientResponseException we) {
+      if (we.getRawStatusCode() == 404) {
+        throw new ResponseStatusException(we.getStatusCode(), "customer not found");
+      }
+      throw new ResponseStatusException(we.getStatusCode());
+    }
+
+    // make customer booking
     TimeZone tz = TimeZone.getTimeZone("UTC");
     DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
     df.setTimeZone(tz);
@@ -56,6 +75,32 @@ public class BookingService {
       bookingRepository.insert(booking);
     } catch (DataIntegrityViolationException e) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "booking number already exists");
+    }
+
+    // send booking email request to notification service
+    try {
+      SimpleDateFormat newDate = new SimpleDateFormat("dd/MM/yyyy");
+      SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy");
+      BookingEmailDto bookingEmail = new BookingEmailDto();
+      Date checkIn = newDate.parse(booking.getCheckIn());
+      Date checkOut = newDate.parse(booking.getCheckOut());
+
+      bookingEmail.setFrom("server@localhost.com");
+      bookingEmail.setTo(customer.getEmail());
+      bookingEmail.setCustomerName(customer.getFirstName() + " " + customer.getLastName());
+      bookingEmail.setRoomNo(booking.getRoomNumber().toString());
+      bookingEmail.setExpectDate(formatter.format(checkIn));
+      bookingEmail.setCheckIn(formatter.format(checkIn));
+      bookingEmail.setCheckOut(formatter.format(checkOut));
+
+      String uri = env.getProperty("application.service.notification.url", "http://127.0.0.1:8082");
+      webClient.post()
+          .uri(String.format("%s/api/mail/booking-message", uri))
+          .body(BodyInserters.fromValue(bookingEmail))
+          .retrieve().bodyToMono(String.class)
+          .block();
+    } catch (WebClientResponseException | ParseException ex) {
+      throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
     }
 
     return new ResponseMessage("booking success");

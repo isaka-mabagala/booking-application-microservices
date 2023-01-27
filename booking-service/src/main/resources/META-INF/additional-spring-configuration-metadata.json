@@ -5,6 +5,18 @@
       "type": "java.lang.String",
       "description": "URL for payment service",
       "defaultValue": "http://127.0.0.1:8083"
+    },
+    {
+      "name": "application.service.customer.url",
+      "type": "java.lang.String",
+      "description": "URL for customer service",
+      "defaultValue": "http://127.0.0.1:8080"
+    },
+    {
+      "name": "application.service.notification.url",
+      "type": "java.lang.String",
+      "description": "URL for notification service",
+      "defaultValue": "http://127.0.0.1:8082"
     }
   ]
 }
