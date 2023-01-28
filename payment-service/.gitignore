@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 project19.mv.db
+project19.trace.db
 
 ### STS ###
 .apt_generated

@@ -1,10 +1,14 @@
 package com.project19.booking.service;
 
 import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.TimeZone;
 import com.project19.booking.dto.BookingEmailDto;
@@ -12,7 +16,9 @@ import com.project19.booking.dto.BookingRequestDto;
 import com.project19.booking.dto.BookingResponseDto;
 import com.project19.booking.dto.BookingTransactionRequestDto;
 import com.project19.booking.dto.CustomerResponseDto;
+import com.project19.booking.dto.TransactionDetailDto;
 import com.project19.booking.dto.TransactionDto;
+import com.project19.booking.dto.TransactionEmailDto;
 import com.project19.booking.dto.TransactionResponseDto;
 import com.project19.booking.message.ResponseMessage;
 import com.project19.booking.model.BookingModel;
@@ -41,20 +47,8 @@ public class BookingService {
   private Environment env;
 
   public ResponseMessage roomBooking(BookingRequestDto bookingRequest) {
-    // send customer detail request to customer service
-    CustomerResponseDto customer;
-    try {
-      String uri = env.getProperty("application.service.customer.url", "http://127.0.0.1:8080");
-      customer = webClient.get()
-          .uri(String.format("%s/api/customer?number=%s", uri, bookingRequest.getCustomerNumber()))
-          .retrieve().bodyToMono(CustomerResponseDto.class)
-          .block();
-    } catch (WebClientResponseException we) {
-      if (we.getRawStatusCode() == 404) {
-        throw new ResponseStatusException(we.getStatusCode(), "customer not found");
-      }
-      throw new ResponseStatusException(we.getStatusCode());
-    }
+    // get customer details from customer service
+    CustomerResponseDto customer = getCustomerDetail(bookingRequest.getCustomerNumber());
 
     // make customer booking
     TimeZone tz = TimeZone.getTimeZone("UTC");
@@ -122,6 +116,7 @@ public class BookingService {
   }
 
   public BookingResponseDto bookingTransaction(BookingTransactionRequestDto bookingTransaction) {
+    // check if booking number exists in DB
     BookingModel booking = bookingRepository.findByBookingNumber(
         bookingTransaction.getBookingNumber()).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -149,13 +144,85 @@ public class BookingService {
       booking.setStatus(BookingStatus.BOOKED.status);
       booking.setTransactionId(response.getTransactionId());
       bookingRepository.save(booking);
-
-      return new BookingResponseDto(booking);
     } catch (WebClientResponseException we) {
       if (we.getRawStatusCode() == 409) {
         throw new ResponseStatusException(we.getStatusCode(), "booking number transaction paid");
       } else if (we.getRawStatusCode() == 406) {
         throw new ResponseStatusException(we.getStatusCode(), "invalid card details");
+      }
+      throw new ResponseStatusException(we.getStatusCode());
+    }
+
+    // get customer details from customer service
+    CustomerResponseDto customer = getCustomerDetail(booking.getCustomerNumber());
+
+    // get transaction details from payment service
+    TransactionDetailDto transactionDetail = getTransactionDetail(booking.getTransactionId());
+
+    // send transaction email request to notification service
+    try {
+      SimpleDateFormat formatter = new SimpleDateFormat("EEE, d MMM yyyy hh:mm aaa");
+      NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+      TransactionEmailDto transactionEmail = new TransactionEmailDto();
+      String cardNumber = transactionDetail.getCardNumber();
+      Double bookingAmount = transactionDetail.getAmount();
+      Date paidDate = Date.from(
+          transactionDetail.getCreatedAt().atZone(ZoneId.systemDefault()).toInstant());
+
+      StringBuffer amountSb = new StringBuffer();
+      numberFormat.format(bookingAmount, amountSb, new FieldPosition(0));
+
+      transactionEmail.setCustomerName(customer.getFirstName() + " " + customer.getLastName());
+      transactionEmail.setFrom("server@localhost.com");
+      transactionEmail.setTo(customer.getEmail());
+      transactionEmail.setPaidDate(formatter.format(paidDate));
+      transactionEmail.setAmount(amountSb.toString());
+      transactionEmail.setCardNo("*****" + cardNumber.substring(cardNumber.length() - 4));
+      transactionEmail.setCardType(transactionDetail.getCardType());
+
+      String uri = env.getProperty("application.service.notification.url", "http://127.0.0.1:8082");
+      webClient.post()
+          .uri(String.format("%s/api/mail/transaction-message", uri))
+          .body(BodyInserters.fromValue(transactionEmail))
+          .retrieve().bodyToMono(String.class)
+          .block();
+    } catch (WebClientResponseException we) {
+      throw new ResponseStatusException(we.getStatusCode());
+    }
+
+    return new BookingResponseDto(booking);
+  }
+
+  private CustomerResponseDto getCustomerDetail(String customerNumber) {
+    // get customer details from customer service
+    try {
+      String uri = env.getProperty("application.service.customer.url", "http://127.0.0.1:8080");
+      CustomerResponseDto customer = webClient.get()
+          .uri(String.format("%s/api/customer?number=%s", uri, customerNumber))
+          .retrieve().bodyToMono(CustomerResponseDto.class)
+          .block();
+      return customer;
+    } catch (WebClientResponseException we) {
+      if (we.getRawStatusCode() == 404) {
+        throw new ResponseStatusException(we.getStatusCode(), "customer not found");
+      }
+      throw new ResponseStatusException(we.getStatusCode());
+    }
+  }
+
+  private TransactionDetailDto getTransactionDetail(Long id) {
+    // get transaction details from payment service
+    try {
+      String uri = env.getProperty("application.service.payment.url", "http://127.0.0.1:8083");
+      TransactionDetailDto response = webClient.get()
+          .uri(String.format("%s/api/transaction/%s", uri, id))
+          .retrieve().bodyToMono(TransactionDetailDto.class)
+          .block();
+
+      return response;
+    } catch (WebClientResponseException we) {
+      if (we.getRawStatusCode() == 404) {
+        throw new ResponseStatusException(we.getStatusCode(), "booking transaction not found");
       }
       throw new ResponseStatusException(we.getStatusCode());
     }
