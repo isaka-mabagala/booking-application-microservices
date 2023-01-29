@@ -1,5 +1,6 @@
 package com.project19.review.service;
 
+import java.util.List;
 import com.project19.review.dto.CustomerResponseDto;
 import com.project19.review.dto.ReviewRequestDto;
 import com.project19.review.dto.ReviewResponseDto;
@@ -54,6 +55,12 @@ public class ReviewService {
             String.format("cannot find review by customer number %s", customerNumber)));
 
     return new ReviewResponseDto(review);
+  }
+
+  public List<ReviewResponseDto> getReviews() {
+    List<ReviewModel> reviews = reviewRepository.findAll();
+
+    return reviews.stream().map(review -> new ReviewResponseDto(review)).toList();
   }
 
   private CustomerResponseDto getCustomerDetail(String customerNumber) {
