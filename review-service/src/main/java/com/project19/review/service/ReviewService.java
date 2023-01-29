@@ -29,6 +29,13 @@ public class ReviewService {
   private Environment env;
 
   public ResponseMessage createReview(ReviewRequestDto reviewRequest) {
+    // check if customer has ever booked from booking service
+    Boolean isBooked = isCustomerBooked(reviewRequest.getCustomerNumber());
+    if (!isBooked) {
+      throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
+          "customer must booked before write a review");
+    }
+
     // get customer details from customer service
     CustomerResponseDto customer = getCustomerDetail(reviewRequest.getCustomerNumber());
 
@@ -76,6 +83,19 @@ public class ReviewService {
       if (we.getRawStatusCode() == 404) {
         throw new ResponseStatusException(we.getStatusCode(), "customer not found");
       }
+      throw new ResponseStatusException(we.getStatusCode());
+    }
+  }
+
+  private Boolean isCustomerBooked(String customerNumber) {
+    // check if customer has ever booked from booking service
+    try {
+      String uri = env.getProperty("application.service.booking.url", "http://127.0.0.1:8081");
+      return webClient.get()
+          .uri(String.format("%s/api/customer-booked/%s", uri, customerNumber))
+          .retrieve().bodyToMono(Boolean.class)
+          .block();
+    } catch (WebClientResponseException we) {
       throw new ResponseStatusException(we.getStatusCode());
     }
   }

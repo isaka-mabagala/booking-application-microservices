@@ -5,6 +5,12 @@
       "type": "java.lang.String",
       "description": "URL for customer service",
       "defaultValue": "http://127.0.0.1:8080"
+    },
+    {
+      "name": "application.service.booking.url",
+      "type": "java.lang.String",
+      "description": "URL for booking service",
+      "defaultValue": "http://127.0.0.1:8081"
     }
   ]
 }

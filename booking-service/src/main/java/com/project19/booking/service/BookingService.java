@@ -115,6 +115,18 @@ public class BookingService {
     return bookings.stream().map(booking -> new BookingResponseDto(booking)).toList();
   }
 
+  public Boolean isCustomerBooked(String customerNumber) {
+    List<BookingModel> bookings = bookingRepository.findByCustomerNumber(customerNumber);
+
+    for (BookingModel booking : bookings) {
+      if (booking.getStatus().contains(BookingStatus.BOOKED.name())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public BookingResponseDto bookingTransaction(BookingTransactionRequestDto bookingTransaction) {
     // check if booking number exists in DB
     BookingModel booking = bookingRepository.findByBookingNumber(

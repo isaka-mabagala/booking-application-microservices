@@ -38,6 +38,12 @@ public class BookingController {
     return bookingService.getBookingByNumber(number);
   }
 
+  @GetMapping("/customer-booked/{number}")
+  @ResponseStatus(HttpStatus.OK)
+  public Boolean isCustomerBooked(@PathVariable String number) {
+    return bookingService.isCustomerBooked(number);
+  }
+
   @GetMapping("/booking")
   @ResponseStatus(HttpStatus.OK)
   public List<BookingResponseDto> customerBookingDetail(@RequestParam Optional<String> number) {
