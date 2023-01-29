@@ -8,6 +8,6 @@ spring.jpa.database-platform = org.hibernate.dialect.H2Dialect
 spring.h2.console.enabled = true
 spring.h2.console.path = /h2-console
 
-server.port = 
+server.port = 8083
 server.error.include-message = always
 server.error.include-stacktrace = on-param
