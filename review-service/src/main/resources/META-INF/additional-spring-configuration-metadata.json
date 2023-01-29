@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "application.service.customer.url",
+      "type": "java.lang.String",
+      "description": "URL for customer service",
+      "defaultValue": "http://127.0.0.1:8080"
+    }
+  ]
+}
