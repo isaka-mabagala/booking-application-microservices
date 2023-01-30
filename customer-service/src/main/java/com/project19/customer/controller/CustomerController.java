@@ -2,6 +2,8 @@ package com.project19.customer.controller;
 
 import java.util.Optional;
 import javax.validation.Valid;
+import com.project19.customer.dto.AuthRequestDto;
+import com.project19.customer.dto.AuthResponseDto;
 import com.project19.customer.dto.CustomerRequestDto;
 import com.project19.customer.dto.CustomerResponseDto;
 import com.project19.customer.message.ResponseMessage;
@@ -27,6 +29,12 @@ public class CustomerController {
   @ResponseStatus(HttpStatus.CREATED)
   public ResponseMessage customerRegister(@Valid @RequestBody CustomerRequestDto customerRequest) {
     return customerService.customerRegister(customerRequest);
+  }
+
+  @PostMapping("/customer/auth")
+  @ResponseStatus(HttpStatus.OK)
+  public AuthResponseDto authenticateCustomer(@Valid @RequestBody AuthRequestDto authRequest) {
+    return customerService.authenticateCustomer(authRequest);
   }
 
   @GetMapping("/customer")

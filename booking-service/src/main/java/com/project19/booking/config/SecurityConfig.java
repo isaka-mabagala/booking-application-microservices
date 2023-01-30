@@ -1,4 +1,4 @@
-package com.project19.customer.config;
+package com.project19.booking.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

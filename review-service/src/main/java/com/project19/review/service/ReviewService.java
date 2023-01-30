@@ -7,6 +7,7 @@ import com.project19.review.dto.ReviewResponseDto;
 import com.project19.review.message.ResponseMessage;
 import com.project19.review.model.ReviewModel;
 import com.project19.review.repository.ReviewRepository;
+import com.project19.review.util.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -27,6 +28,9 @@ public class ReviewService {
 
   @Autowired
   private Environment env;
+
+  @Autowired
+  private JwtToken jwtService;
 
   public ResponseMessage createReview(ReviewRequestDto reviewRequest) {
     // check if customer has ever booked from booking service
@@ -73,9 +77,11 @@ public class ReviewService {
   private CustomerResponseDto getCustomerDetail(String customerNumber) {
     // get customer details from customer service
     try {
+      String token = jwtService.token("review@project19.co.tz");
       String uri = env.getProperty("application.service.customer.url", "http://127.0.0.1:8080");
       CustomerResponseDto customer = webClient.get()
           .uri(String.format("%s/api/customer?number=%s", uri, customerNumber))
+          .headers(h -> h.setBearerAuth(token))
           .retrieve().bodyToMono(CustomerResponseDto.class)
           .block();
       return customer;
@@ -90,9 +96,11 @@ public class ReviewService {
   private Boolean isCustomerBooked(String customerNumber) {
     // check if customer has ever booked from booking service
     try {
+      String token = jwtService.token("review@project19.co.tz");
       String uri = env.getProperty("application.service.booking.url", "http://127.0.0.1:8081");
       return webClient.get()
           .uri(String.format("%s/api/customer-booked/%s", uri, customerNumber))
+          .headers(h -> h.setBearerAuth(token))
           .retrieve().bodyToMono(Boolean.class)
           .block();
     } catch (WebClientResponseException we) {

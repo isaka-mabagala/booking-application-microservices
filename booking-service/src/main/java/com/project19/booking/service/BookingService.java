@@ -24,6 +24,7 @@ import com.project19.booking.message.ResponseMessage;
 import com.project19.booking.model.BookingModel;
 import com.project19.booking.repository.BookingRepository;
 import com.project19.booking.type.BookingStatus;
+import com.project19.booking.util.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,6 +46,9 @@ public class BookingService {
 
   @Autowired
   private Environment env;
+
+  @Autowired
+  private JwtToken jwtService;
 
   public ResponseMessage roomBooking(BookingRequestDto bookingRequest) {
     // get customer details from customer service
@@ -87,9 +91,11 @@ public class BookingService {
       bookingEmail.setCheckIn(formatter.format(checkIn));
       bookingEmail.setCheckOut(formatter.format(checkOut));
 
+      String token = jwtService.token("booking@project19.co.tz");
       String uri = env.getProperty("application.service.notification.url", "http://127.0.0.1:8082");
       webClient.post()
           .uri(String.format("%s/api/mail/booking-message", uri))
+          .headers(h -> h.setBearerAuth(token))
           .body(BodyInserters.fromValue(bookingEmail))
           .retrieve().bodyToMono(String.class)
           .block();
@@ -145,9 +151,11 @@ public class BookingService {
 
     // send transaction request to payment service
     try {
+      String token = jwtService.token("booking@project19.co.tz");
       String uri = env.getProperty("application.service.payment.url", "http://127.0.0.1:8083");
       TransactionResponseDto response = webClient.post()
           .uri(String.format("%s/api/transaction", uri))
+          .headers(h -> h.setBearerAuth(token))
           .body(BodyInserters.fromValue(transaction))
           .retrieve().bodyToMono(TransactionResponseDto.class)
           .block();
@@ -192,9 +200,11 @@ public class BookingService {
       transactionEmail.setCardNo("*****" + cardNumber.substring(cardNumber.length() - 4));
       transactionEmail.setCardType(transactionDetail.getCardType());
 
+      String token = jwtService.token("booking@project19.co.tz");
       String uri = env.getProperty("application.service.notification.url", "http://127.0.0.1:8082");
       webClient.post()
           .uri(String.format("%s/api/mail/transaction-message", uri))
+          .headers(h -> h.setBearerAuth(token))
           .body(BodyInserters.fromValue(transactionEmail))
           .retrieve().bodyToMono(String.class)
           .block();
@@ -208,9 +218,11 @@ public class BookingService {
   private CustomerResponseDto getCustomerDetail(String customerNumber) {
     // get customer details from customer service
     try {
+      String token = jwtService.token("booking@project19.co.tz");
       String uri = env.getProperty("application.service.customer.url", "http://127.0.0.1:8080");
       CustomerResponseDto customer = webClient.get()
           .uri(String.format("%s/api/customer?number=%s", uri, customerNumber))
+          .headers(h -> h.setBearerAuth(token))
           .retrieve().bodyToMono(CustomerResponseDto.class)
           .block();
       return customer;
@@ -225,9 +237,11 @@ public class BookingService {
   private TransactionDetailDto getTransactionDetail(Long id) {
     // get transaction details from payment service
     try {
+      String token = jwtService.token("booking@project19.co.tz");
       String uri = env.getProperty("application.service.payment.url", "http://127.0.0.1:8083");
       TransactionDetailDto response = webClient.get()
           .uri(String.format("%s/api/transaction/%s", uri, id))
+          .headers(h -> h.setBearerAuth(token))
           .retrieve().bodyToMono(TransactionDetailDto.class)
           .block();
 

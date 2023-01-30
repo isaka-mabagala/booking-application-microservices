@@ -4,6 +4,7 @@ import com.project19.payment.dto.TransactionRequestDto;
 import com.project19.payment.dto.TransactionResponseDto;
 import com.project19.payment.model.TransactionModel;
 import com.project19.payment.repository.TransactionRepository;
+import com.project19.payment.util.JwtToken;
 import com.project19.payment.util.PaymentGatewaySimulator;
 import com.project19.payment.util.PaymentGatewaySimulator.CardRequest;
 import com.project19.payment.util.PaymentGatewaySimulator.PaymentResponse;
@@ -28,6 +29,9 @@ public class TransactionService {
 
   @Autowired
   private Environment env;
+
+  @Autowired
+  private JwtToken jwtService;
 
   @Transactional
   public TransactionResponseDto cardTransaction(TransactionRequestDto transactionRDto) {
@@ -76,9 +80,11 @@ public class TransactionService {
   private Boolean isBookingNumberValid(String bookingNumber) {
     // check if booking number is valid from booking service
     try {
+      String token = jwtService.token("payment@project19.co.tz");
       String uri = env.getProperty("application.service.booking.url", "http://127.0.0.1:8081");
       webClient.get()
           .uri(String.format("%s/api/booking/%s", uri, bookingNumber))
+          .headers(h -> h.setBearerAuth(token))
           .retrieve().bodyToMono(String.class)
           .block();
 

@@ -1,11 +1,14 @@
 package com.project19.customer.service;
 
 import java.util.Random;
+import com.project19.customer.dto.AuthRequestDto;
+import com.project19.customer.dto.AuthResponseDto;
 import com.project19.customer.dto.CustomerRequestDto;
 import com.project19.customer.dto.CustomerResponseDto;
 import com.project19.customer.message.ResponseMessage;
 import com.project19.customer.model.CustomerModel;
 import com.project19.customer.repository.CustomerRepository;
+import com.project19.customer.util.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,9 @@ public class CustomerService {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  @Autowired
+  private JwtToken jwtService;
+
   public ResponseMessage customerRegister(CustomerRequestDto customerRequest) {
     CustomerModel customer = new CustomerModel();
     customer.setFirstName(customerRequest.getFirstName());
@@ -37,6 +43,21 @@ public class CustomerService {
     }
 
     return new ResponseMessage("success");
+  }
+
+  public AuthResponseDto authenticateCustomer(AuthRequestDto authRequest) {
+    CustomerModel customer = customerRepository.findByEmail(authRequest.getEmail()).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid credentials"));
+
+    if (!passwordEncoder.matches(authRequest.getPassword(), customer.getPassword())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid credentials");
+    }
+
+    AuthResponseDto authResponse = new AuthResponseDto();
+    authResponse.setEmail(customer.getEmail());
+    authResponse.setToken(jwtService.token(customer.getEmail()));
+
+    return authResponse;
   }
 
   public CustomerResponseDto getCustomerByNumber(String customerNumber) {

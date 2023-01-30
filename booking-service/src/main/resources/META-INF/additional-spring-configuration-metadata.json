@@ -17,6 +17,12 @@
       "type": "java.lang.String",
       "description": "URL for notification service",
       "defaultValue": "http://127.0.0.1:8082"
+    },
+    {
+      "name": "application.security.jwt-token.secret",
+      "type": "java.lang.String",
+      "description": "JWT token secret",
+      "defaultValue": "5970337336763979244226452948404D62516554"
     }
   ]
 }
