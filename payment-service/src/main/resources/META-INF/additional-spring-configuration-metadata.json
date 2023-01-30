@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "name": "application.service.booking.url",
+      "type": "java.lang.String",
+      "description": "URL for booking service",
+      "defaultValue": "http://127.0.0.1:8081"
+    }
+  ]
+}

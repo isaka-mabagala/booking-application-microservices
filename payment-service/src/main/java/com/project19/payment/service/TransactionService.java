@@ -8,10 +8,13 @@ import com.project19.payment.util.PaymentGatewaySimulator;
 import com.project19.payment.util.PaymentGatewaySimulator.CardRequest;
 import com.project19.payment.util.PaymentGatewaySimulator.PaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -20,9 +23,22 @@ public class TransactionService {
   @Autowired
   private TransactionRepository transactionRepository;
 
+  @Autowired
+  private WebClient webClient;
+
+  @Autowired
+  private Environment env;
+
   @Transactional
   public TransactionResponseDto cardTransaction(TransactionRequestDto transactionRDto) {
     try {
+      // check if booking number is valid from booking service
+      Boolean isValidBookingNumber = isBookingNumberValid(transactionRDto.getBookingNumber());
+      if (!isValidBookingNumber) {
+        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "invalid booking number");
+      }
+
+      // save transaction details
       TransactionModel transaction = new TransactionModel();
       transaction.setPaymentMode(transactionRDto.getPaymentMode());
       transaction.setCardNumber(transactionRDto.getCardNumber());
@@ -55,5 +71,20 @@ public class TransactionService {
     return transactionRepository.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
             String.format("cannot find booking transaction by ID %s", id)));
+  }
+
+  private Boolean isBookingNumberValid(String bookingNumber) {
+    // check if booking number is valid from booking service
+    try {
+      String uri = env.getProperty("application.service.booking.url", "http://127.0.0.1:8081");
+      webClient.get()
+          .uri(String.format("%s/api/booking/%s", uri, bookingNumber))
+          .retrieve().bodyToMono(String.class)
+          .block();
+
+      return true;
+    } catch (WebClientResponseException we) {
+      return false;
+    }
   }
 }
