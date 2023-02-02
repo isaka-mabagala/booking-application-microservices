@@ -14,7 +14,7 @@
         *ngFor="let navMenu of navMenuList"
         [ngClass]="{ hidden: !navMenu.show }"
         mat-list-item
-        href="#"
+        href="{{ navMenu.path }}"
       >
         {{ navMenu.name }}
       </a>
@@ -40,7 +40,7 @@
           [ngClass]="{ hidden: !navMenu.show }"
           mat-flat-button
           color="primary"
-          href="#"
+          href="{{ navMenu.path }}"
         >
           {{ navMenu.name }}
         </a>

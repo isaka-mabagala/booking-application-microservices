@@ -28,6 +28,8 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "src/bootstrap-size.css",
+              "src/bootstrap-text.css",
               "src/styles.css"
             ],
             "scripts": []

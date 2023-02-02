@@ -17,8 +17,8 @@ export class MainNavComponent {
     );
 
   navMenuList = [
-    { name: 'Login', show: true },
-    { name: 'Register', show: true },
+    { name: 'Login', path: '/', show: true },
+    { name: 'Register', path: '/register', show: true },
   ];
 
   constructor(private breakpointObserver: BreakpointObserver) {}
