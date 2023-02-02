@@ -1,0 +1,52 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #drawer
+    class="sidenav"
+    [ngClass]="{ hidden: (isHandset$ | async) === false }"
+    fixedInViewport
+    [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="(isHandset$ | async) === false"
+  >
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a
+        *ngFor="let navMenu of navMenuList"
+        [ngClass]="{ hidden: !navMenu.show }"
+        mat-list-item
+        href="#"
+      >
+        {{ navMenu.name }}
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+        type="button"
+        aria-label="Toggle sidenav"
+        mat-icon-button
+        (click)="drawer.toggle()"
+        *ngIf="isHandset$ | async"
+      >
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>PROJECT 19 GROUP</span>
+
+      <span class="nav-spacer"></span>
+      <span *ngIf="!(isHandset$ | async)">
+        <a
+          *ngFor="let navMenu of navMenuList"
+          [ngClass]="{ hidden: !navMenu.show }"
+          mat-flat-button
+          color="primary"
+          href="#"
+        >
+          {{ navMenu.name }}
+        </a>
+      </span>
+    </mat-toolbar>
+    <!-- Add Content Here -->
+    <ng-content></ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>
