@@ -5,6 +5,8 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
+declare var $: any;
 
 @Component({
   selector: 'app-customer-register',
@@ -14,7 +16,7 @@ import {
 export class CustomerRegisterComponent implements OnInit {
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private _router: Router) {
     this.registerForm = fb.group({
       fName: new FormControl('', [Validators.required]),
       lName: new FormControl('', [Validators.required]),
@@ -28,6 +30,16 @@ export class CustomerRegisterComponent implements OnInit {
   submitRegisterForm(): void {
     if (this.registerForm.valid) {
       console.log(this.registerForm.value);
+
+      $.confirm({
+        title: '',
+        content: 'You registered successful!',
+        buttons: {
+          ok: () => {
+            this._router.navigateByUrl('/');
+          },
+        },
+      });
     }
   }
 }

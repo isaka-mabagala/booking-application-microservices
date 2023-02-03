@@ -8,3 +8,12 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+.jc-bs3-container.container {
+  max-width: 500px;
+  margin: auto;
+  text-align: center;
+}
+.jconfirm.jconfirm-white .jconfirm-box .jconfirm-buttons,
+.jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons {
+  float: none;
+}
