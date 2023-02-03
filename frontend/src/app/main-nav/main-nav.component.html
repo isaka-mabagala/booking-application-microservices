@@ -12,11 +12,23 @@
     <mat-nav-list>
       <a
         *ngFor="let navMenu of navMenuList"
-        [ngClass]="{ hidden: !navMenu.show }"
+        [ngClass]="{
+          hidden:
+            ((navMenu.show | async) && !navMenu.isProtected) ||
+            (!(navMenu.show | async) && navMenu.isProtected)
+        }"
         mat-list-item
         href="{{ navMenu.path }}"
       >
         {{ navMenu.name }}
+      </a>
+      <a
+        *ngIf="isLogin$ | async"
+        (click)="logout()"
+        href="javascript:void(0)"
+        mat-list-item
+      >
+        Logout
       </a>
     </mat-nav-list>
   </mat-sidenav>
@@ -37,12 +49,25 @@
       <span *ngIf="!(isHandset$ | async)">
         <a
           *ngFor="let navMenu of navMenuList"
-          [ngClass]="{ hidden: !navMenu.show }"
+          [ngClass]="{
+            hidden:
+              ((navMenu.show | async) && !navMenu.isProtected) ||
+              (!(navMenu.show | async) && navMenu.isProtected)
+          }"
           mat-flat-button
           color="primary"
           href="{{ navMenu.path }}"
         >
           {{ navMenu.name }}
+        </a>
+        <a
+          *ngIf="isLogin$ | async"
+          (click)="logout()"
+          href="javascript:void(0)"
+          mat-flat-button
+          color="primary"
+        >
+          Logout
         </a>
       </span>
     </mat-toolbar>

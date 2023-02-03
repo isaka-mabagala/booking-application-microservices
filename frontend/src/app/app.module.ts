@@ -10,6 +10,8 @@ import { AppComponent } from './app.component';
 import { CustomerLoginComponent } from './components/customer-login/customer-login.component';
 import { CustomerRegisterComponent } from './components/customer-register/customer-register.component';
 import { MainNavComponent } from './main-nav/main-nav.component';
+import { MicroserviceStore } from './store/microservice.store';
+import { WelcomeComponent } from './components/welcome/welcome.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,7 @@ import { MainNavComponent } from './main-nav/main-nav.component';
     MainNavComponent,
     CustomerRegisterComponent,
     CustomerLoginComponent,
+    WelcomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,7 @@ import { MainNavComponent } from './main-nav/main-nav.component';
     FlexLayoutModule,
     AngularMaterialModule,
   ],
-  providers: [],
+  providers: [MicroserviceStore],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
