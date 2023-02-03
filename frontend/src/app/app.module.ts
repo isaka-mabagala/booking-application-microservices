@@ -12,6 +12,7 @@ import { CustomerRegisterComponent } from './components/customer-register/custom
 import { MainNavComponent } from './main-nav/main-nav.component';
 import { MicroserviceStore } from './store/microservice.store';
 import { WelcomeComponent } from './components/welcome/welcome.component';
+import { BookingComponent } from './components/booking/booking.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
     CustomerRegisterComponent,
     CustomerLoginComponent,
     WelcomeComponent,
+    BookingComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,14 +7,14 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { MicroserviceStore } from './store/microservice.store';
+import { LocalStorageService } from './services/local-storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
   constructor(
-    private microserviceStore: MicroserviceStore,
+    private localStorageService: LocalStorageService,
     private router: Router
   ) {}
 
@@ -26,8 +26,12 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    this.microserviceStore.isLogin$.subscribe((res) => {
-      if (!res) {
+    this.localStorageService.getItem('microservice').then((res) => {
+      if (res) {
+        if (!res.isLogin) {
+          this.router.navigate(['/']);
+        }
+      } else {
         this.router.navigate(['/']);
       }
     });
