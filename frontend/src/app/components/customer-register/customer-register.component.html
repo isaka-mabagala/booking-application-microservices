@@ -1,26 +1,59 @@
 <div fxLayout="row" fxLayoutAlign="center stretch">
   <mat-card fxFlex="50" class="mt-5">
     <mat-card-title class="my-4 text-center">Register</mat-card-title>
-    <mat-card-content fxLayout="column">
-      <mat-form-field appearance="outline">
-        <mat-label>First Name</mat-label>
-        <input matInput type="text" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Last Name</mat-label>
-        <input matInput type="text" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
-        <input matInput type="text" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
-        <input matInput type="password" />
-      </mat-form-field>
-      <div class="text-center mt-4 mb-3">
-        <button mat-raised-button color="accent" class="w-50">SUBMIT</button>
-      </div>
+    <mat-card-content *ngIf="registerForm">
+      <form
+        [formGroup]="registerForm"
+        fxLayout="column"
+        (ngSubmit)="submitRegisterForm()"
+      >
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="fName" type="text" />
+          <mat-error
+            *ngIf="this.registerForm.controls['fName'].hasError('required')"
+          >
+            This field is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lName" type="text" />
+          <mat-error
+            *ngIf="this.registerForm.controls['lName'].hasError('required')"
+          >
+            This field is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="text" />
+          <mat-error
+            *ngIf="this.registerForm.controls['email'].hasError('required')"
+          >
+            This field is required
+          </mat-error>
+          <mat-error
+            *ngIf="this.registerForm.controls['email'].hasError('email')"
+          >
+            Invalid email format
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="pass" type="password" />
+          <mat-error
+            *ngIf="this.registerForm.controls['pass'].hasError('required')"
+          >
+            This field is required
+          </mat-error>
+        </mat-form-field>
+        <div class="text-center mt-4 mb-3">
+          <button type="submit" mat-raised-button color="accent" class="w-50">
+            SUBMIT
+          </button>
+        </div>
+      </form>
     </mat-card-content>
   </mat-card>
 </div>
