@@ -1,1 +1,82 @@
-<p>booking works!</p>
+<button mat-raised-button color="primary" class="m-4" (click)="addBookingDialog()">
+  New Booking
+</button>
+
+<mat-divider></mat-divider>
+<div class="m-4">
+  <table mat-table [dataSource]="bookingTableData" class="mat-elevation-z8">
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>No.</th>
+      <td mat-cell *matCellDef="let booking">{{booking.position}}</td>
+    </ng-container>
+
+    <!-- Booking Number Column -->
+    <ng-container matColumnDef="bookingNumber">
+      <th mat-header-cell *matHeaderCellDef>Booking ID</th>
+      <td mat-cell *matCellDef="let booking">{{booking.bookingNumber}}</td>
+    </ng-container>
+
+    <!-- Room Number Column -->
+    <ng-container matColumnDef="roomNumber">
+      <th mat-header-cell *matHeaderCellDef>Room</th>
+      <td mat-cell *matCellDef="let booking">{{booking.roomNumber}}</td>
+    </ng-container>
+
+    <!-- Price Column -->
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef>Price</th>
+      <td mat-cell *matCellDef="let booking">{{booking.price}}</td>
+    </ng-container>
+
+    <!-- Check In Column -->
+    <ng-container matColumnDef="checkIn">
+      <th mat-header-cell *matHeaderCellDef>Check In</th>
+      <td mat-cell *matCellDef="let booking">{{booking.checkIn}}</td>
+    </ng-container>
+
+    <!-- Check Out Column -->
+    <ng-container matColumnDef="checkOut">
+      <th mat-header-cell *matHeaderCellDef>Check Out</th>
+      <td mat-cell *matCellDef="let booking">{{booking.checkOut}}</td>
+    </ng-container>
+
+    <!-- Booked On Column -->
+    <ng-container matColumnDef="bookedOn">
+      <th mat-header-cell *matHeaderCellDef>Booked Date</th>
+      <td mat-cell *matCellDef="let booking">{{booking.bookedOn}}</td>
+    </ng-container>
+
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let booking">{{booking.status}}</td>
+    </ng-container>
+
+    <!-- TransactionButton Column -->
+    <ng-container matColumnDef="transactionButton">
+      <th mat-header-cell *matHeaderCellDef>Action</th>
+      <td mat-cell *matCellDef="let booking">
+        <button
+          mat-raised-button
+          color="primary"
+          *ngIf="!booking.transactionId"
+          (click)="bookingTransactionDialog(booking.bookingNumber)"
+        >
+          Make Transaction
+        </button>
+        <button
+          *ngIf="booking.transactionId"
+          mat-raised-button
+          color="primary"
+          (click)="viewBookingTransactionDialog(booking.transactionId)"
+        >
+          View Transaction
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="bookingTableColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: bookingTableColumns"></tr>
+  </table>
+</div>

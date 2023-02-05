@@ -1,0 +1,84 @@
+<h2 mat-dialog-title class="text-center">Create New Booking</h2>
+<mat-dialog-content class="p-0 m-0">
+  <form
+    [formGroup]="bookingForm"
+    fxLayout="column"
+    fxLayoutAlign="center"
+    (ngSubmit)="submitBookingForm()"
+  >
+    <mat-form-field appearance="outline">
+      <mat-label>Room Number</mat-label>
+      <mat-select formControlName="roomNumber">
+        <mat-option value="201">201</mat-option>
+        <mat-option value="202">202</mat-option>
+        <mat-option value="203">203</mat-option>
+        <mat-option value="204">204</mat-option>
+        <mat-option value="205">205</mat-option>
+        <mat-option value="206">206</mat-option>
+        <mat-option value="207">207</mat-option>
+        <mat-option value="301">301</mat-option>
+        <mat-option value="302">302</mat-option>
+        <mat-option value="303">303</mat-option>
+        <mat-option value="304">304</mat-option>
+        <mat-option value="305">305</mat-option>
+        <mat-option value="306">306</mat-option>
+        <mat-option value="307">307</mat-option>
+        <mat-option value="401">401</mat-option>
+        <mat-option value="402">402</mat-option>
+        <mat-option value="403">403</mat-option>
+        <mat-option value="404">404</mat-option>
+        <mat-option value="405">405</mat-option>
+        <mat-option value="406">406</mat-option>
+        <mat-option value="407">407</mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="this.bookingForm.controls['roomNumber'].hasError('required')"
+      >
+        This field is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Check In</mat-label>
+      <input
+        matInput
+        formControlName="checkIn"
+        [matDatepicker]="checkInPicker"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="checkInPicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #checkInPicker></mat-datepicker>
+      <mat-error
+        *ngIf="this.bookingForm.controls['checkIn'].hasError('required')"
+      >
+        This field is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Check Out</mat-label>
+      <input
+        matInput
+        formControlName="checkOut"
+        [matDatepicker]="checkOutPicker"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="checkOutPicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #checkOutPicker></mat-datepicker>
+      <mat-error
+        *ngIf="this.bookingForm.controls['checkOut'].hasError('required')"
+      >
+        This field is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="text-center mt-4 mb-3">
+      <button mat-raised-button mat-dialog-close class="mr-3">CANCEL</button>
+      <button type="submit" mat-raised-button color="primary" class="ml-3">
+        SAVE
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>
