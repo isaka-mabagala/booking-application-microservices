@@ -22,9 +22,11 @@
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
     "@ngrx/component-store": "^13.0.2",
+    "igniteui-webcomponents": "^4.2.1",
     "jquery": "^3.6.0",
     "jquery-confirm": "^3.3.4",
     "localforage": "^1.10.0",
+    "md5": "^2.3.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

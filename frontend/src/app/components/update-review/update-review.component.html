@@ -1,0 +1,54 @@
+<h2 mat-dialog-title class="text-center">Update Review</h2>
+
+<mat-dialog-content class="p-0 m-0">
+  <form
+    [formGroup]="reviewForm"
+    fxLayout="column"
+    fxLayoutAlign="center"
+    (ngSubmit)="submitReviewForm()"
+  >
+    <div class="mb-4" fxLayout="row" fxLayoutAlign="start center">
+      <igc-rating
+        class="text-success"
+        [value]="this.reviewForm.controls['rate'].value"
+        min="1"
+        max="5"
+        (igcChange)="reviewRatingChanged($event)"
+      ></igc-rating>
+      <span class="text-success ml-3">{{reviewRateStatus(this.reviewForm.controls['rate'].value)}}</span>
+    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Title of your review</mat-label>
+      <input
+        matInput
+        formControlName="title"
+        type="text"
+        placeholder="Summarize your visit or highlight an interesting detail"
+      />
+      <mat-error *ngIf="this.reviewForm.controls['title'].hasError('required')">
+        This field is required
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Your review</mat-label>
+      <textarea
+        matInput
+        formControlName="description"
+        type="text"
+        placeholder="By sharing your experiences, you're helping travelers make better choices and plan their dream trips."
+      ></textarea>
+      <mat-error
+        *ngIf="this.reviewForm.controls['description'].hasError('required')"
+      >
+        This field is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="text-center mt-4 mb-3">
+      <button mat-raised-button mat-dialog-close class="mr-3">CANCEL</button>
+      <button type="submit" mat-raised-button color="primary" class="ml-3">
+        SUBMIT
+      </button>
+    </div>
+  </form>
+</mat-dialog-content>

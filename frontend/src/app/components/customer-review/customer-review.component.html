@@ -1,0 +1,57 @@
+<button
+  *ngIf="true"
+  mat-raised-button
+  color="primary"
+  class="m-4"
+  (click)="addReviewDialog()"
+>
+  Write Review
+</button>
+
+<button
+  *ngIf="true"
+  mat-raised-button
+  color="primary"
+  class="m-4"
+  (click)="updateReviewDialog()"
+>
+  Update Review
+</button>
+
+<mat-divider></mat-divider>
+<div class="m-4">
+  <mat-card class="mt-5 w-50">
+    <mat-card-content fxLayout="column">
+      <igc-rating
+        class="text-success"
+        value="3"
+        min="1"
+        max="5"
+        disabled
+      ></igc-rating>
+      <h4 class="mt-3 title">Basic place to stay</h4>
+      <div class="mt-3 text-info">
+        <p class="quote">
+          Good location only 10min walking from the station. The rooms are basic
+          and simple. They have hot water that works sometimes. Wifi is not
+          working all the time. The breakfast consists in omelete and bread.
+        </p>
+      </div>
+      <div
+        class="mt-4 text-success"
+        fxLayout="row"
+        fxLayoutAlign="space-between"
+      >
+        <div fxLayout="row" fxLayoutAlign="start center">
+          <img
+            class="avatar"
+            [src]="emailGravatarURL('isaxstarisaka@gmail.com')"
+            alt="avatar"
+          />
+          <span class="pl-2">Isaka Mabagala</span>
+        </div>
+        <p>8 weeks ago</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
