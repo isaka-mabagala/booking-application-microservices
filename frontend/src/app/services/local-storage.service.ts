@@ -23,4 +23,8 @@ export class LocalStorageService {
   async setItem(item: string, value: any) {
     await localForage.setItem(item, value).then((res) => res);
   }
+
+  async removeItem(item: string) {
+    await localForage.removeItem(item);
+  }
 }

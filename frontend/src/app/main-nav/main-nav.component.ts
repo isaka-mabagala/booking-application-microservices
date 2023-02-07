@@ -2,6 +2,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { LocalStorageService } from '../services/local-storage.service';
 import { MicroserviceStore } from '../store/microservice.store';
 
 @Component({
@@ -49,11 +50,13 @@ export class MainNavComponent {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private microserviceStore: MicroserviceStore
+    private microserviceStore: MicroserviceStore,
+    private localStorageService: LocalStorageService
   ) {}
 
   logout(): void {
-    this.microserviceStore.setIsLogin(false);
+    this.localStorageService.removeItem('microservice');
+    this.localStorageService.removeItem('token');
     window.location.reload();
   }
 }
