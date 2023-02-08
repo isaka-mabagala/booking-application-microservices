@@ -5,6 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { BookingCreate } from 'src/app/models/customer-api';
+import { Customer } from 'src/app/models/microservice';
+import { MicroserviceStore } from 'src/app/store/microservice.store';
+import { environment as env } from '../../../environments/environment';
+import { ApiDataService } from '../../services/api-data.service';
 
 @Component({
   selector: 'app-booking-room',
@@ -13,8 +19,14 @@ import {
 })
 export class BookingRoomComponent implements OnInit {
   bookingForm: FormGroup;
+  customer: Customer | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private dialogRef: MatDialogRef<BookingRoomComponent>,
+    private fb: FormBuilder,
+    private apiDataService: ApiDataService,
+    private microserviceStore: MicroserviceStore
+  ) {
     this.bookingForm = fb.group({
       roomNumber: new FormControl('', [Validators.required]),
       checkIn: new FormControl('', [Validators.required]),
@@ -22,11 +34,30 @@ export class BookingRoomComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.microserviceStore.user$.subscribe((res) => {
+      this.customer = res;
+    });
+  }
 
-  submitBookingForm(): void {
+  async submitBookingForm(): Promise<void> {
     if (this.bookingForm.valid) {
-      console.log(this.bookingForm.value);
+      const formDetail = this.bookingForm.value;
+
+      const bookingDetail: BookingCreate = {
+        customerNumber: this.customer!.custNumber,
+        roomPrice: env.roomPrice,
+        roomNumber: Number(formDetail.roomNumber),
+        checkIn: formDetail.checkIn.format('dd/mm/yyyy'),
+        checkOut: formDetail.checkOut.format('dd/mm/yyyy'),
+      };
+
+      const submitDetail = await this.apiDataService.bookingCreate(
+        bookingDetail
+      );
+      submitDetail.subscribe(() => {
+        this.dialogRef.close('success');
+      });
     }
   }
 }

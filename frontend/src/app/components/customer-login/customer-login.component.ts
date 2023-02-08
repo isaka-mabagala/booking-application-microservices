@@ -60,7 +60,7 @@ export class CustomerLoginComponent implements OnInit {
   }
 
   async getCustomerDetail(email: string): Promise<void> {
-    const details = await this.apiDataService.customerDetailByEnail(email);
+    const details = await this.apiDataService.customerDetailByEmail(email);
     details.subscribe((res) => {
       this.microserviceStore.setUser({
         firstName: res.firstName,

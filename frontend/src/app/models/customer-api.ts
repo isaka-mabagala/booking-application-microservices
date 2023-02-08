@@ -21,3 +21,41 @@ export interface CustomerAuth {
   email: string;
   token: string;
 }
+
+export interface BookingDetail {
+  bookingNumber: string;
+  customerNumber: string;
+  roomNumber: number;
+  roomPrice: number;
+  checkIn: string;
+  checkOut: string;
+  bookedOn: string;
+  status: string;
+  transactionId: number;
+}
+
+export interface TransactionDetail {
+  id: number;
+  bookingNumber: string;
+  cardNumber: string;
+  cardType: string;
+  paymentMode: string;
+  bankName: string;
+  amount: number;
+  createdAt: string;
+}
+
+export interface BookingCreate {
+  roomPrice: number;
+  checkIn: string;
+  roomNumber: number;
+  customerNumber: string;
+  checkOut: string;
+}
+
+export interface BookingTransaction {
+  cardCvc: string;
+  cardExpiry: string;
+  cardNumber: string;
+  bookingNumber: string;
+}

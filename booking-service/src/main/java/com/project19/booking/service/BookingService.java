@@ -168,7 +168,8 @@ public class BookingService {
       if (we.getRawStatusCode() == 409) {
         throw new ResponseStatusException(we.getStatusCode(), "booking number transaction paid");
       } else if (we.getRawStatusCode() == 406) {
-        throw new ResponseStatusException(we.getStatusCode(), "invalid card details");
+        throw new ResponseStatusException(we.getStatusCode(),
+            "invalid card details or insufficient balance");
       }
       throw new ResponseStatusException(we.getStatusCode());
     }

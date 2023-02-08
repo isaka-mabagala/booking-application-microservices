@@ -4,7 +4,7 @@
 
 <mat-divider></mat-divider>
 <div class="m-4">
-  <table mat-table [dataSource]="bookingTableData" class="mat-elevation-z8">
+  <table mat-table [dataSource]="(bookingTableData$ | async)!" class="mat-elevation-z8">
     <!-- Position Column -->
     <ng-container matColumnDef="position">
       <th mat-header-cell *matHeaderCellDef>No.</th>

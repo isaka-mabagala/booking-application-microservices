@@ -1,7 +1,16 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Customer, CustomerAuth, CustomerLogin } from '../models/customer-api';
+import { environment as env } from '../../environments/environment';
+import {
+  BookingCreate,
+  BookingDetail,
+  BookingTransaction,
+  Customer,
+  CustomerAuth,
+  CustomerLogin,
+  TransactionDetail,
+} from '../models/customer-api';
 import { LocalStorageService } from '../services/local-storage.service';
 
 @Injectable({
@@ -16,7 +25,7 @@ export class ApiDataService {
   async customerLogin(
     detail: CustomerLogin
   ): Promise<Observable<CustomerAuth>> {
-    const baseApiUrl = 'http://127.0.0.1:8080';
+    const baseApiUrl = env.customerApiURL;
 
     return this.http.post<CustomerAuth>(
       `${baseApiUrl}/api/customer/auth`,
@@ -24,8 +33,8 @@ export class ApiDataService {
     );
   }
 
-  async customerDetailByEnail(email: string): Promise<Observable<Customer>> {
-    const baseApiUrl = 'http://127.0.0.1:8080';
+  async customerDetailByEmail(email: string): Promise<Observable<Customer>> {
+    const baseApiUrl = env.customerApiURL;
     const accessToken = await this.localStorageService.getItem('token');
 
     const headers = new HttpHeaders().set(
@@ -41,8 +50,8 @@ export class ApiDataService {
     });
   }
 
-  async transactionById(id: number): Promise<Observable<Object>> {
-    const baseApiUrl = 'http://127.0.0.1:8083';
+  async transactionById(id: number): Promise<Observable<TransactionDetail>> {
+    const baseApiUrl = env.paymentApiURL;
     const accessToken = await this.localStorageService.getItem('token');
 
     const headers = new HttpHeaders().set(
@@ -50,6 +59,56 @@ export class ApiDataService {
       `Bearer ${accessToken}`
     );
 
-    return this.http.get(`${baseApiUrl}/api/transaction/${id}`, { headers });
+    return this.http.get<TransactionDetail>(
+      `${baseApiUrl}/api/transaction/${id}`,
+      { headers }
+    );
+  }
+
+  async bookingsByCustomer(
+    customerNumber: string
+  ): Promise<Observable<BookingDetail[]>> {
+    const baseApiUrl = env.bookingApiURL;
+    const accessToken = await this.localStorageService.getItem('token');
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${accessToken}`
+    );
+
+    const params = new HttpParams().set('number', customerNumber);
+
+    return this.http.get<BookingDetail[]>(`${baseApiUrl}/api/booking`, {
+      params,
+      headers,
+    });
+  }
+
+  async bookingCreate(detail: BookingCreate): Promise<Observable<Object>> {
+    const baseApiUrl = env.bookingApiURL;
+    const accessToken = await this.localStorageService.getItem('token');
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${accessToken}`
+    );
+
+    return this.http.post(`${baseApiUrl}/api/booking`, detail, { headers });
+  }
+
+  async bookingTransaction(
+    detail: BookingTransaction
+  ): Promise<Observable<Object>> {
+    const baseApiUrl = env.bookingApiURL;
+    const accessToken = await this.localStorageService.getItem('token');
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${accessToken}`
+    );
+
+    return this.http.post(`${baseApiUrl}/api/booking/transaction`, detail, {
+      headers,
+    });
   }
 }

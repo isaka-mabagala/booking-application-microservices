@@ -10,12 +10,12 @@
         <h4>Date Paid</h4>
       </div>
       <div fxFlex="50" class="text-left pl-3">
-        <h4>CARD</h4>
-        <h4>4107 7342 3815 8180</h4>
-        <h4>VISA</h4>
-        <h4>CRDB</h4>
-        <h4>45,000</h4>
-        <h4>2023-01-27</h4>
+        <h4>{{(transaction | async)?.paymentMode}}</h4>
+        <h4>{{(transaction | async)?.cardNumber}}</h4>
+        <h4>{{(transaction | async)?.cardType}}</h4>
+        <h4>{{(transaction | async)?.bankName}}</h4>
+        <h4>{{(transaction | async)?.amount}}</h4>
+        <h4>{{(transaction | async)?.createdAt}}</h4>
       </div>
     </div>
 </mat-dialog-content>

@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable, of } from 'rxjs';
 import { BookingTable } from 'src/app/models/booking-table';
+import { MicroserviceStore } from 'src/app/store/microservice.store';
+import { ApiDataService } from '../../services/api-data.service';
 import { BookingRoomComponent } from '../booking-room/booking-room.component';
 import { BookingTransactionDetailComponent } from '../booking-transaction-detail/booking-transaction-detail.component';
 import { BookingTransactionComponent } from '../booking-transaction/booking-transaction.component';
+declare var $: any;
 
 @Component({
   selector: 'app-booking',
@@ -23,45 +27,43 @@ export class BookingComponent implements OnInit {
     'transactionButton',
   ];
 
-  bookingTableData: BookingTable[] = [
-    {
-      position: 1,
-      bookingNumber: 'Ah6jqy1jKr',
-      roomNumber: 301,
-      price: '45,000',
-      checkIn: '31/01/2023',
-      checkOut: '02/02/2023',
-      bookedOn: '2023-01-27',
-      status: 'NOT BOOKED',
-      transactionId: null,
-    },
-    {
-      position: 2,
-      bookingNumber: 'Au6cqy1jKk',
-      roomNumber: 207,
-      price: '45,000',
-      checkIn: '12/01/2023',
-      checkOut: '14/01/2023',
-      bookedOn: '2023-01-10',
-      status: 'BOOKED',
-      transactionId: 15,
-    },
-    {
-      position: 3,
-      bookingNumber: 'Hu6cpy4jLk',
-      roomNumber: 207,
-      price: '45,000',
-      checkIn: '12/11/2022',
-      checkOut: '14/11/2022',
-      bookedOn: '2022-11-10',
-      status: 'BOOKED',
-      transactionId: 10,
-    },
-  ];
+  bookingTableData$: Observable<BookingTable[]> = of();
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private apiDataService: ApiDataService,
+    private microserviceStore: MicroserviceStore
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getBookingList();
+  }
+
+  async getBookingList(): Promise<void> {
+    this.microserviceStore.user$.subscribe(async (res) => {
+      const custNumber = res.custNumber;
+      const bookings = await this.apiDataService.bookingsByCustomer(custNumber);
+      const bookingTableData: BookingTable[] = [];
+
+      bookings.subscribe((res) => {
+        res.forEach((booking, index) => {
+          bookingTableData.push({
+            position: index + 1,
+            bookingNumber: booking.bookingNumber,
+            roomNumber: booking.roomNumber,
+            price: booking.roomPrice.toString(),
+            checkIn: booking.checkIn,
+            checkOut: booking.checkOut,
+            bookedOn: booking.bookedOn,
+            status: booking.status,
+            transactionId: booking.transactionId,
+          });
+        });
+
+        this.bookingTableData$ = of(bookingTableData);
+      });
+    });
+  }
 
   viewBookingTransactionDialog(transactionId: number): void {
     const dialogRef = this.dialog.open(BookingTransactionDetailComponent, {
@@ -79,7 +81,14 @@ export class BookingComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      if (result === 'success') {
+        this.getBookingList();
+        $.alert({
+          title: '',
+          type: 'green',
+          content: 'Transaction success!',
+        });
+      }
     });
   }
 
@@ -91,7 +100,14 @@ export class BookingComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      if (result === 'success') {
+        this.getBookingList();
+        $.alert({
+          title: '',
+          type: 'green',
+          content: 'Booking created successful!',
+        });
+      }
     });
   }
 }

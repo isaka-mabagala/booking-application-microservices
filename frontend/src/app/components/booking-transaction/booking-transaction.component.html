@@ -1,5 +1,6 @@
 <h2 mat-dialog-title class="text-center">Booking Checkout (CARD)</h2>
 <mat-dialog-content class="p-0 m-0">
+  <div class="text-danger text-center mb-3">{{formError}}</div>
   <form
     [formGroup]="transactionForm"
     fxLayout="column"
