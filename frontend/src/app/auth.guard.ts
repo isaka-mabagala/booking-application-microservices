@@ -26,10 +26,16 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    this.localStorageService.getItem('microservice').then((res) => {
+    this.localStorageService.getItem('microservice').then(async (res) => {
+      const accessToken = await this.localStorageService.getItem('token');
+
       if (res) {
         if (!res.isLogin) {
           this.router.navigate(['/']);
+        } else if (this.isTokenExpired(accessToken)) {
+          await this.localStorageService.removeItem('microservice');
+          await this.localStorageService.removeItem('token');
+          window.location.reload();
         }
       } else {
         this.router.navigate(['/']);
@@ -37,5 +43,10 @@ export class AuthGuard implements CanActivate {
     });
 
     return true;
+  }
+
+  private isTokenExpired(token: string) {
+    const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+    return Math.floor(new Date().getTime() / 1000) >= expiry;
   }
 }

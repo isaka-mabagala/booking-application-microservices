@@ -9,6 +9,7 @@ import {
   Customer,
   CustomerAuth,
   CustomerLogin,
+  CustomerRegister,
   TransactionDetail,
 } from '../models/customer-api';
 import { LocalStorageService } from '../services/local-storage.service';
@@ -31,6 +32,14 @@ export class ApiDataService {
       `${baseApiUrl}/api/customer/auth`,
       detail
     );
+  }
+
+  async customerRegister(
+    detail: CustomerRegister
+  ): Promise<Observable<Object>> {
+    const baseApiUrl = env.customerApiURL;
+
+    return this.http.post(`${baseApiUrl}/api/customer/register`, detail);
   }
 
   async customerDetailByEmail(email: string): Promise<Observable<Customer>> {

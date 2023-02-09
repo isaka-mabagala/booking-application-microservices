@@ -6,6 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+import { CustomerRegister } from 'src/app/models/customer-api';
+import { ApiDataService } from '../../services/api-data.service';
 declare var $: any;
 
 @Component({
@@ -16,7 +19,11 @@ declare var $: any;
 export class CustomerRegisterComponent implements OnInit {
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private _router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private _router: Router,
+    private apiDataService: ApiDataService
+  ) {
     this.registerForm = fb.group({
       fName: new FormControl('', [Validators.required]),
       lName: new FormControl('', [Validators.required]),
@@ -27,19 +34,40 @@ export class CustomerRegisterComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  submitRegisterForm(): void {
+  async submitRegisterForm(): Promise<void> {
     if (this.registerForm.valid) {
-      console.log(this.registerForm.value);
+      const formDetail = this.registerForm.value;
+      const customerDetail: CustomerRegister = {
+        firstName: formDetail.fName,
+        lastName: formDetail.lName,
+        email: formDetail.email,
+        password: formDetail.pass,
+      };
 
-      $.confirm({
-        title: '',
-        content: 'You registered successful!',
-        buttons: {
-          ok: () => {
-            this._router.navigateByUrl('/');
-          },
-        },
-      });
+      const submitDetail = await this.apiDataService.customerRegister(
+        customerDetail
+      );
+
+      submitDetail
+        .pipe(
+          catchError((err) => {
+            if (err.error.status == 409) {
+              $.alert({ title: '', type: 'red', content: err.error.message });
+            }
+            return throwError(() => err);
+          })
+        )
+        .subscribe(() => {
+          $.confirm({
+            title: '',
+            content: 'You registered successful!',
+            buttons: {
+              ok: () => {
+                this._router.navigateByUrl('/');
+              },
+            },
+          });
+        });
     }
   }
 }
