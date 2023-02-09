@@ -27,7 +27,7 @@ export class BookingComponent implements OnInit {
     'transactionButton',
   ];
 
-  bookingTableData$: Observable<BookingTable[]> = of();
+  bookingTableData$: Observable<BookingTable[] | null> = of();
 
   constructor(
     private dialog: MatDialog,
@@ -43,23 +43,25 @@ export class BookingComponent implements OnInit {
     this.microserviceStore.user$.subscribe(async (res) => {
       const custNumber = res.custNumber;
       const bookings = await this.apiDataService.bookingsByCustomer(custNumber);
-      const bookingTableData: BookingTable[] = [];
+      let bookingTableData: BookingTable[] | null = null;
 
       bookings.subscribe((res) => {
-        res.forEach((booking, index) => {
-          bookingTableData.push({
-            position: index + 1,
-            bookingNumber: booking.bookingNumber,
-            roomNumber: booking.roomNumber,
-            price: booking.roomPrice.toString(),
-            checkIn: booking.checkIn,
-            checkOut: booking.checkOut,
-            bookedOn: booking.bookedOn,
-            status: booking.status,
-            transactionId: booking.transactionId,
+        if (res.length) {
+          bookingTableData = [];
+          res.forEach((booking, index) => {
+            bookingTableData?.push({
+              position: index + 1,
+              bookingNumber: booking.bookingNumber,
+              roomNumber: booking.roomNumber,
+              price: booking.roomPrice.toString(),
+              checkIn: booking.checkIn,
+              checkOut: booking.checkOut,
+              bookedOn: booking.bookedOn,
+              status: booking.status,
+              transactionId: booking.transactionId,
+            });
           });
-        });
-
+        }
         this.bookingTableData$ = of(bookingTableData);
       });
     });

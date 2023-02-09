@@ -20,6 +20,7 @@ import { UpdateReviewComponent } from './components/update-review/update-review.
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { MainNavComponent } from './main-nav/main-nav.component';
 import { MicroserviceStore } from './store/microservice.store';
+import { DateFormatPipe } from './pipes/date-format.pipe';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { MicroserviceStore } from './store/microservice.store';
     CustomerReviewComponent,
     AddReviewComponent,
     UpdateReviewComponent,
+    DateFormatPipe,
   ],
   imports: [
     BrowserModule,

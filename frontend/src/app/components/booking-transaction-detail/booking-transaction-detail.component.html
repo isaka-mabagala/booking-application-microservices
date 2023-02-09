@@ -15,7 +15,7 @@
         <h4>{{(transaction | async)?.cardType}}</h4>
         <h4>{{(transaction | async)?.bankName}}</h4>
         <h4>{{(transaction | async)?.amount}}</h4>
-        <h4>{{(transaction | async)?.createdAt}}</h4>
+        <h4>{{(transaction | async)?.createdAt | dateFormat:'dd/mm/yyyy h:MM TT'}}</h4>
       </div>
     </div>
 </mat-dialog-content>

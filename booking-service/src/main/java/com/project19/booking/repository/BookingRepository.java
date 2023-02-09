@@ -11,6 +11,7 @@ public interface BookingRepository extends MongoRepository<BookingModel, String>
   Optional<BookingModel> findByBookingNumber(String bookingNumber);
 
   @Aggregation(pipeline = {
+      "{$match: {customerNumber: ?0}}",
       "{$sort: {_id: -1}}"
   })
   List<BookingModel> findByCustomerNumber(String customerNumber);

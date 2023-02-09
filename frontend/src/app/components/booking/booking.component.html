@@ -4,7 +4,10 @@
 
 <mat-divider></mat-divider>
 <div class="m-4">
-  <table mat-table [dataSource]="(bookingTableData$ | async)!" class="mat-elevation-z8">
+  <div class="text-center text-muted" *ngIf="!(bookingTableData$ | async)">
+    <em>No booking data available!</em>
+  </div>
+  <table *ngIf="(bookingTableData$ | async)" mat-table [dataSource]="(bookingTableData$ | async)!" class="mat-elevation-z8">
     <!-- Position Column -->
     <ng-container matColumnDef="position">
       <th mat-header-cell *matHeaderCellDef>No.</th>
@@ -26,7 +29,7 @@
     <!-- Price Column -->
     <ng-container matColumnDef="price">
       <th mat-header-cell *matHeaderCellDef>Price</th>
-      <td mat-cell *matCellDef="let booking">{{booking.price}}</td>
+      <td mat-cell *matCellDef="let booking">{{booking.price | currency: 'TZS '}}</td>
     </ng-container>
 
     <!-- Check In Column -->
@@ -44,7 +47,7 @@
     <!-- Booked On Column -->
     <ng-container matColumnDef="bookedOn">
       <th mat-header-cell *matHeaderCellDef>Booked Date</th>
-      <td mat-cell *matCellDef="let booking">{{booking.bookedOn}}</td>
+      <td mat-cell *matCellDef="let booking">{{booking.bookedOn | dateFormat}}</td>
     </ng-container>
 
     <!-- Status Column -->
