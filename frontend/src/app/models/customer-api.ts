@@ -59,3 +59,20 @@ export interface BookingTransaction {
   cardNumber: string;
   bookingNumber: string;
 }
+
+export interface ReviewCreate {
+  rate: number;
+  description: string;
+  customerNumber: string;
+  title: string;
+}
+
+export interface Review {
+  customerNumber: string;
+  fullname: string;
+  email: string;
+  rate: number;
+  description: string;
+  title: string;
+  createdDate: Date;
+}

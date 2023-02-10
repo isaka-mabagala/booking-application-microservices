@@ -15,6 +15,8 @@ public class ReviewResponseDto {
 
   private String fullname;
 
+  private String email;
+
   private String title;
 
   private String description;
@@ -26,6 +28,7 @@ public class ReviewResponseDto {
   public ReviewResponseDto(ReviewModel review) {
     customerNumber = review.getCustomerNumber();
     fullname = review.getFullname();
+    email = review.getEmail();
     title = review.getTitle();
     description = review.getDescription();
     rate = review.getRate();

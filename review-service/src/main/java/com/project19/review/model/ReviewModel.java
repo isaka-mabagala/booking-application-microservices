@@ -26,6 +26,9 @@ public class ReviewModel {
   private String fullname;
 
   @Field
+  private String email;
+
+  @Field
   private String title;
 
   @Field

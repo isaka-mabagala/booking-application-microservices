@@ -125,7 +125,7 @@ public class BookingService {
     List<BookingModel> bookings = bookingRepository.findByCustomerNumber(customerNumber);
 
     for (BookingModel booking : bookings) {
-      if (booking.getStatus().contains(BookingStatus.BOOKED.name())) {
+      if (booking.getStatus().equals(BookingStatus.BOOKED.name())) {
         return true;
       }
     }

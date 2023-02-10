@@ -10,6 +10,8 @@ import {
   CustomerAuth,
   CustomerLogin,
   CustomerRegister,
+  Review,
+  ReviewCreate,
   TransactionDetail,
 } from '../models/customer-api';
 import { LocalStorageService } from '../services/local-storage.service';
@@ -117,6 +119,48 @@ export class ApiDataService {
     );
 
     return this.http.post(`${baseApiUrl}/api/booking/transaction`, detail, {
+      headers,
+    });
+  }
+
+  async reviewCreate(detail: ReviewCreate): Promise<Observable<Object>> {
+    const baseApiUrl = env.reviewApiURL;
+    const accessToken = await this.localStorageService.getItem('token');
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${accessToken}`
+    );
+
+    return this.http.post(`${baseApiUrl}/api/review/create`, detail, {
+      headers,
+    });
+  }
+
+  async reviewUpdate(detail: ReviewCreate): Promise<Observable<Object>> {
+    const baseApiUrl = env.reviewApiURL;
+    const accessToken = await this.localStorageService.getItem('token');
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${accessToken}`
+    );
+
+    return this.http.put(`${baseApiUrl}/api/review/update`, detail, {
+      headers,
+    });
+  }
+
+  async customerReviews(): Promise<Observable<Review[]>> {
+    const baseApiUrl = env.reviewApiURL;
+    const accessToken = await this.localStorageService.getItem('token');
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${accessToken}`
+    );
+
+    return this.http.get<Review[]>(`${baseApiUrl}/api/reviews`, {
       headers,
     });
   }

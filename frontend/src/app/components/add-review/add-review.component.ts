@@ -5,7 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { defineComponents, IgcRatingComponent } from 'igniteui-webcomponents';
+import { catchError, throwError } from 'rxjs';
+import { Customer, ReviewCreate } from 'src/app/models/customer-api';
+import { MicroserviceStore } from 'src/app/store/microservice.store';
+import { ApiDataService } from '../../services/api-data.service';
 defineComponents(IgcRatingComponent);
 
 @Component({
@@ -15,8 +20,14 @@ defineComponents(IgcRatingComponent);
 })
 export class AddReviewComponent implements OnInit {
   reviewForm: FormGroup;
+  customer: Customer | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private dialogRef: MatDialogRef<AddReviewComponent>,
+    private fb: FormBuilder,
+    private apiDataService: ApiDataService,
+    private microserviceStore: MicroserviceStore
+  ) {
     this.reviewForm = fb.group({
       title: new FormControl('', [Validators.required]),
       description: new FormControl('', [Validators.required]),
@@ -24,11 +35,36 @@ export class AddReviewComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.microserviceStore.user$.subscribe((res) => {
+      this.customer = res;
+    });
+  }
 
-  submitReviewForm(): void {
+  async submitReviewForm(): Promise<void> {
     if (this.reviewForm.valid) {
-      console.log(this.reviewForm.value);
+      const formDetail = this.reviewForm.value;
+
+      const reviewDetail: ReviewCreate = {
+        customerNumber: this.customer!.custNumber,
+        title: formDetail.title,
+        description: formDetail.description,
+        rate: formDetail.rate,
+      };
+
+      const submitDetail = await this.apiDataService.reviewCreate(reviewDetail);
+      submitDetail
+        .pipe(
+          catchError((err) => {
+            if (err.error.status == 406) {
+              this.dialogRef.close('not-booked');
+            }
+            return throwError(() => err);
+          })
+        )
+        .subscribe(() => {
+          this.dialogRef.close('success');
+        });
     }
   }
 

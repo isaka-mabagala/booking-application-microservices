@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { defineComponents, IgcRatingComponent } from 'igniteui-webcomponents';
+import { Review, ReviewCreate } from 'src/app/models/customer-api';
+import { ApiDataService } from '../../services/api-data.service';
 defineComponents(IgcRatingComponent);
 
 @Component({
@@ -16,21 +19,40 @@ defineComponents(IgcRatingComponent);
 export class UpdateReviewComponent implements OnInit {
   reviewForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private dialogRef: MatDialogRef<UpdateReviewComponent>,
+    private fb: FormBuilder,
+    private apiDataService: ApiDataService,
+    @Inject(MAT_DIALOG_DATA) private review: Review
+  ) {
     this.reviewForm = fb.group({
-      title: new FormControl('The amazing title', [Validators.required]),
-      description: new FormControl('The amazing review body', [
-        Validators.required,
-      ]),
-      rate: new FormControl(4, [Validators.required]),
+      title: new FormControl('', [Validators.required]),
+      description: new FormControl('', [Validators.required]),
+      rate: new FormControl(0, [Validators.required]),
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.reviewForm.controls['rate'].setValue(this.review.rate);
+    this.reviewForm.controls['title'].setValue(this.review.title);
+    this.reviewForm.controls['description'].setValue(this.review.description);
+  }
 
-  submitReviewForm(): void {
+  async submitReviewForm(): Promise<void> {
     if (this.reviewForm.valid) {
-      console.log(this.reviewForm.value);
+      const formDetail = this.reviewForm.value;
+
+      const reviewDetail: ReviewCreate = {
+        customerNumber: this.review.customerNumber,
+        title: formDetail.title,
+        description: formDetail.description,
+        rate: formDetail.rate,
+      };
+
+      const submitDetail = await this.apiDataService.reviewUpdate(reviewDetail);
+      submitDetail.subscribe(() => {
+        this.dialogRef.close('success');
+      });
     }
   }
 

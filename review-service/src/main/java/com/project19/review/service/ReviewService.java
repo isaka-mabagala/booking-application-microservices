@@ -49,10 +49,31 @@ public class ReviewService {
     review.setDescription(reviewRequest.getDescription());
     review.setRate(reviewRequest.getRate());
     review.setCustomerNumber(customer.getCustNumber());
+    review.setEmail(customer.getEmail());
     review.setFullname(customer.getFirstName() + " " + customer.getLastName());
 
     try {
       reviewRepository.insert(review);
+    } catch (DataIntegrityViolationException e) {
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "customer review already exists");
+    }
+
+    return new ResponseMessage("success");
+  }
+
+  public ResponseMessage updateReview(ReviewRequestDto reviewRequest) {
+    // save review detail
+    ReviewModel review = reviewRepository.findByCustomerNumber(reviewRequest.getCustomerNumber())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+            String.format("cannot find review by customer number %s",
+                reviewRequest.getCustomerNumber())));
+
+    review.setTitle(reviewRequest.getTitle());
+    review.setDescription(reviewRequest.getDescription());
+    review.setRate(reviewRequest.getRate());
+
+    try {
+      reviewRepository.save(review);
     } catch (DataIntegrityViolationException e) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "customer review already exists");
     }
