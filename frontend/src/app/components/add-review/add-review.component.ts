@@ -21,6 +21,7 @@ defineComponents(IgcRatingComponent);
 export class AddReviewComponent implements OnInit {
   reviewForm: FormGroup;
   customer: Customer | null = null;
+  submitFormProgress: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<AddReviewComponent>,
@@ -43,6 +44,7 @@ export class AddReviewComponent implements OnInit {
 
   async submitReviewForm(): Promise<void> {
     if (this.reviewForm.valid) {
+      this.submitFormProgress = true;
       const formDetail = this.reviewForm.value;
 
       const reviewDetail: ReviewCreate = {
@@ -59,10 +61,12 @@ export class AddReviewComponent implements OnInit {
             if (err.error.status == 406) {
               this.dialogRef.close('not-booked');
             }
+            this.submitFormProgress = false;
             return throwError(() => err);
           })
         )
         .subscribe(() => {
+          this.submitFormProgress = false;
           this.dialogRef.close('success');
         });
     }

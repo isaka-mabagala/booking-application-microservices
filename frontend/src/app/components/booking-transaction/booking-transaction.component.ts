@@ -18,6 +18,7 @@ import { ApiDataService } from '../../services/api-data.service';
 export class BookingTransactionComponent implements OnInit {
   transactionForm: FormGroup;
   formError: any = null;
+  submitFormProgress: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<BookingTransactionComponent>,
@@ -50,6 +51,7 @@ export class BookingTransactionComponent implements OnInit {
     this.formError = null;
 
     if (this.transactionForm.valid && this.data) {
+      this.submitFormProgress = true;
       const formDetail = this.transactionForm.value;
 
       const transactionDetail: BookingTransaction = {
@@ -68,10 +70,12 @@ export class BookingTransactionComponent implements OnInit {
             if (err.error.status == 406) {
               this.formError = err.error.message;
             }
+            this.submitFormProgress = false;
             return throwError(() => err);
           })
         )
         .subscribe(() => {
+          this.submitFormProgress = false;
           this.dialogRef.close('success');
         });
     }

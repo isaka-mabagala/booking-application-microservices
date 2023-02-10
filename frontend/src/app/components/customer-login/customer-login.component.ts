@@ -19,6 +19,7 @@ declare var $: any;
 })
 export class CustomerLoginComponent implements OnInit {
   loginForm: FormGroup;
+  submitFormProgress: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +37,7 @@ export class CustomerLoginComponent implements OnInit {
 
   async submitLoginForm(): Promise<void> {
     if (this.loginForm.valid) {
+      this.submitFormProgress = true;
       const formDetail = this.loginForm.value;
 
       const login = await this.apiDataService.customerLogin({
@@ -49,10 +51,12 @@ export class CustomerLoginComponent implements OnInit {
             if (err.error.status == 400) {
               $.alert({ title: '', type: 'red', content: err.error.message });
             }
+            this.submitFormProgress = false;
             return throwError(() => err);
           })
         )
         .subscribe(async (res) => {
+          this.submitFormProgress = false;
           await this.localStorageService.setItem('token', res.token);
           this.getCustomerDetail(res.email);
         });

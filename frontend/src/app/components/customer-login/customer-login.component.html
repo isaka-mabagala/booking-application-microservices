@@ -1,5 +1,9 @@
 <div fxLayout="row" fxLayoutAlign="center stretch">
   <mat-card fxFlex="50" class="mt-5">
+    <mat-progress-bar
+      *ngIf="submitFormProgress"
+      mode="indeterminate"
+    ></mat-progress-bar>
     <mat-card-title class="my-4 text-center">Login</mat-card-title>
     <mat-card-content *ngIf="loginForm">
       <form
@@ -26,7 +30,13 @@
           </mat-error>
         </mat-form-field>
         <div class="text-center mt-4 mb-3">
-          <button type="submit" mat-raised-button color="accent" class="w-50">
+          <button
+            [disabled]="submitFormProgress"
+            type="submit"
+            mat-raised-button
+            color="accent"
+            class="w-50"
+          >
             SUBMIT
           </button>
         </div>

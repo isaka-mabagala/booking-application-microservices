@@ -18,6 +18,7 @@ defineComponents(IgcRatingComponent);
 })
 export class UpdateReviewComponent implements OnInit {
   reviewForm: FormGroup;
+  submitFormProgress: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<UpdateReviewComponent>,
@@ -40,6 +41,7 @@ export class UpdateReviewComponent implements OnInit {
 
   async submitReviewForm(): Promise<void> {
     if (this.reviewForm.valid) {
+      this.submitFormProgress = true;
       const formDetail = this.reviewForm.value;
 
       const reviewDetail: ReviewCreate = {
@@ -51,6 +53,7 @@ export class UpdateReviewComponent implements OnInit {
 
       const submitDetail = await this.apiDataService.reviewUpdate(reviewDetail);
       submitDetail.subscribe(() => {
+        this.submitFormProgress = false;
         this.dialogRef.close('success');
       });
     }

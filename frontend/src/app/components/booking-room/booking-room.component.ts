@@ -20,6 +20,7 @@ import { ApiDataService } from '../../services/api-data.service';
 export class BookingRoomComponent implements OnInit {
   bookingForm: FormGroup;
   customer: Customer | null = null;
+  submitFormProgress: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<BookingRoomComponent>,
@@ -42,6 +43,7 @@ export class BookingRoomComponent implements OnInit {
 
   async submitBookingForm(): Promise<void> {
     if (this.bookingForm.valid) {
+      this.submitFormProgress = true;
       const formDetail = this.bookingForm.value;
 
       const bookingDetail: BookingCreate = {
@@ -56,6 +58,7 @@ export class BookingRoomComponent implements OnInit {
         bookingDetail
       );
       submitDetail.subscribe(() => {
+        this.submitFormProgress = false;
         this.dialogRef.close('success');
       });
     }

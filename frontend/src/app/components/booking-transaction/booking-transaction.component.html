@@ -1,3 +1,7 @@
+<mat-progress-bar
+  *ngIf="submitFormProgress"
+  mode="indeterminate"
+></mat-progress-bar>
 <h2 mat-dialog-title class="text-center">Booking Checkout (CARD)</h2>
 <mat-dialog-content class="p-0 m-0">
   <div class="text-danger text-center mb-3">{{formError}}</div>
@@ -9,40 +13,77 @@
   >
     <mat-form-field appearance="outline">
       <mat-label>Card Number</mat-label>
-      <input matInput formControlName="cardNumber" type="text" placeholder="Ex. 5161 4800 0276 4486" />
-      <mat-error *ngIf="this.transactionForm.controls['cardNumber'].hasError('required')">
+      <input
+        matInput
+        formControlName="cardNumber"
+        type="text"
+        placeholder="Ex. 5161 4800 0276 4486"
+      />
+      <mat-error
+        *ngIf="this.transactionForm.controls['cardNumber'].hasError('required')"
+      >
         This field is required
       </mat-error>
-      <mat-error *ngIf="this.transactionForm.controls['cardNumber'].hasError('pattern')">
+      <mat-error
+        *ngIf="this.transactionForm.controls['cardNumber'].hasError('pattern')"
+      >
         Invalid card number format
       </mat-error>
     </mat-form-field>
     <div fxLayout="row" fxLayoutAlign="space-between">
       <mat-form-field appearance="outline">
-      <mat-label>Expiry</mat-label>
-      <input matInput formControlName="cardExpiry" type="text" placeholder="Ex. 09/23" />
-      <mat-error *ngIf="this.transactionForm.controls['cardExpiry'].hasError('required')">
-        This field is required
-      </mat-error>
-      <mat-error *ngIf="this.transactionForm.controls['cardExpiry'].hasError('pattern')">
-        Invalid expiry date format
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>CVC/CVV</mat-label>
-      <input matInput formControlName="cardCvc" type="text" placeholder="Ex. 175" />
-      <mat-error *ngIf="this.transactionForm.controls['cardCvc'].hasError('required')">
-        This field is required
-      </mat-error>
-       <mat-error *ngIf="this.transactionForm.controls['cardCvc'].hasError('pattern')">
-        Invalid cvc format
-      </mat-error>
-    </mat-form-field>
+        <mat-label>Expiry</mat-label>
+        <input
+          matInput
+          formControlName="cardExpiry"
+          type="text"
+          placeholder="Ex. 09/23"
+        />
+        <mat-error
+          *ngIf="
+            this.transactionForm.controls['cardExpiry'].hasError('required')
+          "
+        >
+          This field is required
+        </mat-error>
+        <mat-error
+          *ngIf="
+            this.transactionForm.controls['cardExpiry'].hasError('pattern')
+          "
+        >
+          Invalid expiry date format
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>CVC/CVV</mat-label>
+        <input
+          matInput
+          formControlName="cardCvc"
+          type="text"
+          placeholder="Ex. 175"
+        />
+        <mat-error
+          *ngIf="this.transactionForm.controls['cardCvc'].hasError('required')"
+        >
+          This field is required
+        </mat-error>
+        <mat-error
+          *ngIf="this.transactionForm.controls['cardCvc'].hasError('pattern')"
+        >
+          Invalid cvc format
+        </mat-error>
+      </mat-form-field>
     </div>
 
     <div class="text-center mt-4 mb-3">
       <button mat-raised-button mat-dialog-close class="mr-3">CANCEL</button>
-      <button type="submit" mat-raised-button color="primary" class="ml-3">
+      <button
+        [disabled]="submitFormProgress"
+        type="submit"
+        mat-raised-button
+        color="primary"
+        class="ml-3"
+      >
         CHECKOUT
       </button>
     </div>

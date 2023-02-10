@@ -18,6 +18,7 @@ declare var $: any;
 })
 export class CustomerRegisterComponent implements OnInit {
   registerForm: FormGroup;
+  submitFormProgress: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -36,6 +37,7 @@ export class CustomerRegisterComponent implements OnInit {
 
   async submitRegisterForm(): Promise<void> {
     if (this.registerForm.valid) {
+      this.submitFormProgress = true;
       const formDetail = this.registerForm.value;
       const customerDetail: CustomerRegister = {
         firstName: formDetail.fName,
@@ -54,10 +56,12 @@ export class CustomerRegisterComponent implements OnInit {
             if (err.error.status == 409) {
               $.alert({ title: '', type: 'red', content: err.error.message });
             }
+            this.submitFormProgress = false;
             return throwError(() => err);
           })
         )
         .subscribe(() => {
+          this.submitFormProgress = false;
           $.confirm({
             title: '',
             content: 'You registered successful!',
