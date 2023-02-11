@@ -1,7 +1,7 @@
 # Microservice Project (Assignment CSS 311)
 ![Transaction](meta/transaction.png?raw=true)
 
-A microservice architecture based (hotel room) booking application with Spring Boot Framework (backend) and Angular 13 Framework (frontend). This assignment provided by Mr. Lunodzo Mwinuka to Bachelor in Information Technology and Systems (BSc.ITS) and Bachelor of Science in ICT with Management (BSc.ICT-M) students for Distributed Systems (CSS 311) course at Mzumbe University Morogoro, Tanzania.
+A microservice architecture based (hotel room) booking application with Spring Boot Framework (backend) and Angular 13 Framework (frontend). This assignment provided by Mr. Lunodzo Mwinuka to Bachelor of Science in Information Technology and Systems (BSc.ITS) and Bachelor of Science in ICT with Management (BSc.ICT-M) students for Distributed Systems (CSS 311) course at Mzumbe University Morogoro, Tanzania.
 
 ### Application Details
 - Authentication between services communication used `JWT`
@@ -33,7 +33,6 @@ A microservice architecture based (hotel room) booking application with Spring B
 - Write a review
 
 ## High Level Architecture
-
 The application consists of the following five (5) microservices:
 
 | API url                  | Service
@@ -45,18 +44,19 @@ The application consists of the following five (5) microservices:
 | http://127.0.0.1:8084    | Review Service
 
 #### Architecture Diagram - 
-
+![Architecture Diagram](meta/architecture-diagram.jpg?raw=true)
 
 ## Logic Flow
-
 ### Making a new booking -
+![Booking Flow](meta/booking-flow.jpg?raw=true)
 
 ### Making booking transaction -
+![Booking Transaction Flow](meta/booking-transaction-flow.jpg?raw=true)
 
 ### Write a review -
+![Write Review Flow](meta/write-review-flow.jpg?raw=true)
 
 ## Future Enhancements
-
 1. Provide single start-up script to bring up all the services
 2. Implement API gateway and load balancer
 
@@ -74,3 +74,7 @@ The application consists of the following five (5) microservices:
 ![Transaction Email](meta/transaction-email.png?raw=true)
 
 ![Transaction Success](meta/transaction-success.png?raw=true)
+
+![Reviews](meta/reviews.png?raw=true)
+
+![Write Review](meta/write-review.png?raw=true)
